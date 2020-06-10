@@ -17,7 +17,7 @@ router.get("/", (req, res) => {   // by default handlebars will search for /layo
     //     })
     // })
     const { search, from, to } = req.query;
-    console.log(search, from, to);
+    // console.log(search, from, to);
     getCubes((cubes) => {
         cubes = cubes.filter((c => c.name.toLocaleLowerCase().includes((search || c.name).toLocaleLowerCase())));
         cubes = cubes.filter((c) => (c.difficulty >= (from || 1)) && (c.difficulty <= (to || 6)));

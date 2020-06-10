@@ -1,7 +1,7 @@
 module.exports = {
     development: {
         port: process.env.PORT || 4400,
-        databaseUrl:"mongodb://localhost:27017/test"
+        databaseUrl:`mongodb+srv://user:${process.env.DB_PASSWORD}@softuni-hkggx.mongodb.net/cublicle?retryWrites=true&w=majority`
     },
     production: {  
         databaseUrl:"https://mlab.com/test",
