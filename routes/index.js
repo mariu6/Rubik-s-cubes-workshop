@@ -1,7 +1,7 @@
-// TODO: Require Controllers...
 const { Router } = require("express");
-const { getCubes, getCube } = require("../controllers/database");
-const Cube = require("../models/cubeModel");
+const { getAllCubes, getCube } = require("../controllers/cubes")
+const { getCubes } = require("../controllers/database");
+const Cube = require("../models/cube");
 
 
 // here we require the controllers and are going to call all the routes
@@ -9,22 +9,18 @@ const Cube = require("../models/cubeModel");
 
 const router = Router();     // instead of app.get()... we are using router.get()
 
-router.get("/", (req, res) => {   // by default handlebars will search for /layouts/main.hbs
-    // getAllCubes((cubes) => {
-    //     res.render("index", {           // renders index.hbs with the template data
-    //         title: "Cube worshop",      // tab title
-    //         cubes          // syncronous read of the database.json file. Then handlebars will process #each element of the array and it's properties      
-    //     })
-    // })
+router.get("/", async (req, res) => {
     const { search, from, to } = req.query;
     // console.log(search, from, to);
+    const cubes = await getAllCubes();
     getCubes((cubes) => {
         cubes = cubes.filter((c => c.name.toLocaleLowerCase().includes((search || c.name).toLocaleLowerCase())));
         cubes = cubes.filter((c) => (c.difficulty >= (from || 1)) && (c.difficulty <= (to || 6)));
-        res.render("index", {           // renders index.hbs with the template data
-            title: "Cube worshop",      // tab title
-            cubes          // syncronous read of the database.json file. Then handlebars will process #each element of the array and it's properties      
-        })
+
+    })
+    res.render("index", {
+        title: "Cube worshop",
+        cubes
     })
 })
 
@@ -46,19 +42,23 @@ router.post("/create", (req, res) => {
         description,
         imageUrl,
         difficultyLevel
-    } = req.body
-    const cube = new Cube(name, description, imageUrl, difficultyLevel);
-    cube.save(() => {
-        res.redirect("/");
+    } = req.body;
+    const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel });
+    cube.save((err) => {            // model.save() method comes ready to se from mongoose 
+        if (err) {
+            console.error(err)
+        } else {
+            res.redirect("/");
+        }
     });
 })
 
-router.get("/details/:id", (req, res) => {
-    getCube(req.params.id, (cube) => {
-        res.render("details", {
-            title: "Details | Cube worshop",
-            ...cube
-        })
+router.get("/details/:id", async (req, res) => {
+    const cube = await getCube(req.params.id)
+
+    res.render("details", {
+        title: "Details | Cube worshop",
+        ...cube
     })
 })
 
