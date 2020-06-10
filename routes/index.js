@@ -1,8 +1,6 @@
 const { Router } = require("express");
 const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require("../controllers/cubes");
 const { getAccessories } = require("../controllers/accessories");
-const { getCubes } = require("../controllers/database");
-const Cube = require("../models/cube");
 const Accessory = require("../models/accessory");
 
 
@@ -14,12 +12,12 @@ const router = Router();     // instead of app.get()... we are using router.get(
 router.get("/", async (req, res) => {
     const { search, from, to } = req.query;
     // console.log(search, from, to);
-    const cubes = await getAllCubes();
-    // getCubes((cubes) => {
-    //     cubes = cubes.filter((c => c.name.toLocaleLowerCase().includes((search || c.name).toLocaleLowerCase())));
-    //     cubes = cubes.filter((c) => (c.difficulty >= (from || 1)) && (c.difficulty <= (to || 6)));
+    let cubes = await getAllCubes();
 
-    // })
+    // search
+    cubes = cubes.filter((c => c.name.toLocaleLowerCase().includes((search || c.name).toLocaleLowerCase())));
+    cubes = cubes.filter((c) => (c.difficulty >= (from || 1)) && (c.difficulty <= (to || 6)));
+
     res.render("index", {
         title: "Cube worshop",
         cubes    // for handlebars rendering
@@ -30,30 +28,6 @@ router.get("/about", (req, res) => {
     res.render("about", {
         title: "About | Cube worshop"
     })
-})
-
-router.get("/create", (req, res) => {
-    res.render("create", {
-        title: "Create | Cube worshop"
-    })
-})
-
-router.post("/create", (req, res) => {
-    const {
-        name,
-        description,
-        imageUrl,
-        difficultyLevel
-    } = req.body;
-    const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel });    // data must be in {}, as it is treated as object
-    cube.save((err) => {            // model.save() method comes ready to se from mongoose 
-        if (err) {
-            console.error(err)
-            res.redirect("/create");
-        } else {
-            res.redirect("/");
-        }
-    });
 })
 
 router.get("/details/:id", async (req, res) => {
@@ -92,15 +66,12 @@ router.get("/attach/accessory/:id", async (req, res) => {
 
 router.post("/create/accessory", async (req, res) => {
     const { name, description, imageUrl } = req.body;
-
     const accessory = new Accessory({   // must be in {}
         name, description, imageUrl
     });
-
     await accessory.save((err) => {            // model.save() method comes ready to se from mongoose 
         if (err) console.error(err);
     })
-
     res.redirect("/create/accessory")
 })
 
@@ -116,6 +87,5 @@ router.get("*", (req, res) => {
         title: "Error | Cube worshop"
     })
 })
-
 
 module.exports = router;

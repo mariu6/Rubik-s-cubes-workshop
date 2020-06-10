@@ -5,6 +5,7 @@ const config = require('./config/config')[env];        // add the configurations
 // const configEnv = config[env]                            // settings of the values form config file - the property [env] which is set by me 
 const app = require('express')();                        // use express and start it as app
 const indexRouter = require("./routes");                 // point to the router routes, no need to write index, as it will be default to search for
+const createRouter = require("./routes/create");
 
 mongoose.connect(config.databaseUrl, {
     useNewUrlParser: true,          
@@ -20,6 +21,7 @@ mongoose.connect(config.databaseUrl, {
 require('./config/express')(app);                        // require settings for express, providing argument app
 // require('./routes/index')();                    
 
-app.use("/", indexRouter)                       //  
+app.use("/create", createRouter);
+app.use("/", indexRouter);                       //  It would be good to separate and group the routes
 
 app.listen(config.port, console.log(`Listening on port ${config.port}! Now its up to you...`)); 
