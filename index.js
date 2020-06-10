@@ -12,4 +12,4 @@ require('./config/express')(app);                        // require settings for
 
 app.use("/", indexRouter)                       //  
 
-app.listen(config.port, console.log(`Listening on port ${config.port}! Now its up to you...`));
+app.listen(configEnv.port, console.log(`Listening on port ${configEnv.port}! Now its up to you...`));
