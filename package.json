@@ -1,0 +1,32 @@
+{
+  "name": "my-workshop-Cubicle",
+  "authors": "Mariusz Ilijew, Valentin Georgiev",
+  "version": "1.0.0",
+  "description": "Workshop for Express JS Back-end course",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^3.1.0",
+    "mongodb": "3.5.8",
+    "mongoose": "^5.9.18",
+    "uuid": "^8.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mariu6/my-workshop-Cubicle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mariu6/my-workshop-Cubicle/issues"
+  },
+  "homepage": "https://github.com/mariu6/my-workshop-Cubicle#readme"
+}
