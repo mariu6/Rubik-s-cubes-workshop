@@ -1,14 +1,33 @@
-const { Router } = require("express");
+const express = require("express");
+const router = new express.Router();
 const Cube = require("../models/cube");
-const router = Router();     
+const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require("../controllers/cubes");
 
-router.get("/", (req, res) => {
+
+router.get("/edit/", (req,res) => {
+    res.render("editCubePage");
+});
+
+router.get("/delete", (req,res) => {
+    res.render("deleteCubePage");
+});
+
+
+router.get("/details/:id", async (req, res) => {
+    const cube = await getCubeWithAccessories(req.params.id);
+    res.render("details", {
+        title: "Details | Cube worshop",
+        ...cube,
+    })
+})
+
+router.get("/create", (req, res) => {
     res.render("create", {
         title: "Create | Cube worshop"
     })
 })
 
-router.post("/", (req, res) => {
+router.post("/create", (req, res) => {
     const {
         name,
         description,
