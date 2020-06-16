@@ -10,11 +10,11 @@ const Accessory = require("../models/accessory");
 const router = Router();     // instead of app.get()... we are using router.get()
 
 router.get("/", async (req, res) => {
-    const { search, from, to } = req.query;
     // console.log(search, from, to);
     let cubes = await getAllCubes();
-
+    
     // search
+    const { search, from, to } = req.query;
     cubes = cubes.filter((c => c.name.toLocaleLowerCase().includes((search || c.name).toLocaleLowerCase())));
     cubes = cubes.filter((c) => (c.difficulty >= (from || 1)) && (c.difficulty <= (to || 6)));
 
