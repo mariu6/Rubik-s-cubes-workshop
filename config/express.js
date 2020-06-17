@@ -1,10 +1,12 @@
 const express = require('express');
 const handlebars = require('express-handlebars');
+const cookieParser = require("cookie-parser");
 // const bodyParser = require('body-parser');        // not needed, as it became part of express
 
 // here is the full SETUP OF EXPRESS for view engine, static files etc
 module.exports = (app) => {
     //TODO: SETUP THE VIEW ENGINE - HANDLEBARS
+    app.use(cookieParser());
     app.engine('.hbs', handlebars({
         extname: ".hbs"
     }));
