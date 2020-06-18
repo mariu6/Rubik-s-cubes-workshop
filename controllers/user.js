@@ -4,6 +4,11 @@ const bcrypt = require("bcrypt");
 
 const privateKey = "CUBE-WORKSHOP-SOFTUNI";
 
+const generateToken = (data) => {
+    const token = jwt.sign(data, privateKey);
+    return token;
+}
+
 const saveUser = async (req, res) => {
     const {
         username,
@@ -20,13 +25,12 @@ const saveUser = async (req, res) => {
 
     const userObject = await user.save();     // returns { _id, username, hashPassword }
 
-    const token = jwt.sign({
+    const token = generateToken({
         userID: userObject._id,
         username: userObject.username,    // pass shoudn't be shown here
-    }, privateKey);
-
+    });
+    
     res.cookie("aid", token);
-
     return true;
 
 
@@ -43,6 +47,30 @@ const saveUser = async (req, res) => {
     // });
 }
 
+const verifyUser = async (req, res) => {
+    const {
+        username,
+        password,
+    } = req.body;
+    
+    // get user by username
+    const user = await User.findOne({username})   // returns { _id, username, hashedPassword }
+    
+    const status = await bcrypt.compare(password, user.password);     // password comparsoin => true || false
+
+    if (status) {
+        const token = generateToken({
+            userID: user._id,
+            username: user.username,    // pass shoudn't be shown here
+        });
+        
+        res.cookie("aid", token);
+    }
+    
+    return status;
+}
+
 module.exports = {
     saveUser,
+    verifyUser
 }
