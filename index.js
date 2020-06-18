@@ -1,3 +1,4 @@
+require("dotenv").config();
 const env = process.env.NODE_ENV || 'development';       // if not set, to switch to 'development' mode of enviroment
 
 const mongoose = require("mongoose");
