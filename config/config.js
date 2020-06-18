@@ -1,8 +1,8 @@
 module.exports = {
     development: {
-        port: process.env.PORT || 4400,
-        privateKey: "CUBE-WORKSHOP-SOFTUNI",     // for jwt
-        databaseUrl: `mongodb+srv://user:${process.env.DB_PASSWORD}@softuni-hkggx.mongodb.net/cublicle?retryWrites=true&w=majority`
+        port: process.env.PORT,
+        privateKey: process.env.PRIVATE_KEY,     // for jwt
+        databaseUrl: process.env.DATABASE_URL
     },
     production: {
         databaseUrl: "https://mlab.com/test",

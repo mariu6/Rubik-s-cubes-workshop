@@ -1,12 +1,12 @@
 const express = require("express");
 const router = new express.Router();
-const { saveUser, verifyUser } = require("../controllers/user");
+const { saveUser, verifyUser, guestAccess, getUserStatus } = require("../controllers/user");
 
-router.get("/login", (req, res) => {
+router.get("/login", guestAccess, getUserStatus, (req, res) => {
     res.render("loginPage");
 });
 
-router.get("/signup", (req, res) => {
+router.get("/signup", guestAccess, getUserStatus, (req, res) => {
     res.render("registerPage");
 });
 
