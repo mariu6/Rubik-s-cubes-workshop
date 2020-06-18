@@ -1,11 +1,12 @@
+const env = process.env.NODE_ENV || 'development'; 
+
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");  // import the Model
 const bcrypt = require("bcrypt");
-
-const privateKey = "CUBE-WORKSHOP-SOFTUNI";
+const config = require("../config/config")[env];
 
 const generateToken = (data) => {
-    const token = jwt.sign(data, privateKey);
+    const token = jwt.sign(data, config.privateKey);
     return token;
 }
 
@@ -57,10 +58,9 @@ const verifyUser = async (req, res) => {
     const user = await User.findOne({username})   // returns { _id, username, hashedPassword }
     
     const status = await bcrypt.compare(password, user.password);     // password comparsoin => true || false
-
     if (status) {
         const token = generateToken({
-            userID: user._id,
+            userID: user._id,           // will be referensed for Cube creator
             username: user.username,    // pass shoudn't be shown here
         });
         
