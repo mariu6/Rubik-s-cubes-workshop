@@ -24,6 +24,10 @@ const CubeSchema = new mongoose.Schema({
         type: "ObjectId",
         ref: "Accessory",
     }],
+    creatorId: {
+        type: "ObjectId",
+        ref: "User",            // refers to the User Model 
+    }
 })
 
 CubeSchema.path("imageUrl").validate(function (url) {       // validation for valid url for the image link
