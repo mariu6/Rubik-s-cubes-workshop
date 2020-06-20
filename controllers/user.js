@@ -19,20 +19,27 @@ const saveUser = async (req, res) => {
     //  hashing
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const user = new User({
-        username,
-        password: hashedPassword,
-    });
 
-    const userObject = await user.save();     // returns { _id, username, hashPassword }
+    try {
+        const user = new User({
+            username,
+            password: hashedPassword,
+        });
+        const userObject = await user.save();     // returns { _id, username, hashPassword }
 
-    const token = generateToken({
-        userID: userObject._id,
-        username: userObject.username,    // pass shoudn't be shown here
-    });
+        const token = generateToken({
+            userID: userObject._id,
+            username: userObject.username,    // pass shoudn't be shown here
+        });
 
-    res.cookie("aid", token);
-    return true;
+        res.cookie("aid", token);
+        return token;
+    } catch (err) {
+        return {
+            error: true,
+            message: err,
+        }
+    }
 
 
     // another hashing
@@ -55,19 +62,35 @@ const verifyUser = async (req, res) => {
     } = req.body;
 
     // get user by username
-    const user = await User.findOne({ username })   // returns { _id, username, hashedPassword }
+    try {
+        const user = await User.findOne({ username })   // returns { _id, username, hashedPassword }
+        if (!user) {
+            return {
+                error: true,
+                message: "There is no such user!"
+            };
+        }
+        const status = await bcrypt.compare(password, user.password);     // password comparsoin => true || false
+        if (status) {
+            const token = generateToken({
+                userID: user._id,           // will be referensed for Cube creator
+                username: user.username,    // pass shoudn't be shown here
+            });
 
-    const status = await bcrypt.compare(password, user.password);     // password comparsoin => true || false
-    if (status) {
-        const token = generateToken({
-            userID: user._id,           // will be referensed for Cube creator
-            username: user.username,    // pass shoudn't be shown here
-        });
+            res.cookie("aid", token);
+        }
 
-        res.cookie("aid", token);
+        return {
+            error: !status, 
+            message: status || "Wrong password"
+        };
+    } catch(err) {
+        return {
+            error: true,
+            message: "There is no such user!",
+            status
+        };
     }
-
-    return status;
 }
 
 const authAccess = (req, res, next) => {    // to set USER available pages
