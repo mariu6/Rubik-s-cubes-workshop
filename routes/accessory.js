@@ -39,10 +39,16 @@ router.post("/create/accessory", authAccess, async (req, res) => {
     const accessory = new Accessory({   // must be in {}
         name, description, imageUrl
     });
-    await accessory.save((err) => {            // model.save() method comes ready to se from mongoose 
-        if (err) console.error(err);
-    })
-    res.redirect("/create/accessory")
+    try {
+        await accessory.save()            // model.save() method comes ready to use from mongoose 
+        res.redirect("/create/accessory");
+    } catch (err) {
+        res.render("createAccessory", {
+            title: "Create accessory | Cube worshop",
+            isLoggedIn: req.isLoggedIn,
+            error: "Accessory details are not valid!",      // for handlebars, to be displayed as error-message
+        })
+    }
 })
 
 router.post("/attach/accessory/:id", authAccess, async (req, res) => {

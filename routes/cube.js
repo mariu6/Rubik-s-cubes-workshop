@@ -37,7 +37,7 @@ router.get("/create", authAccess, getUserStatus, (req, res) => {
     })
 })
 
-router.post("/create", authAccess, (req, res) => {
+router.post("/create", authAccess, async (req, res) => {
     const {
         name,
         description,
@@ -45,17 +45,26 @@ router.post("/create", authAccess, (req, res) => {
         difficultyLevel
     } = req.body;
 
-    const token = req.cookies["aid"];                                  // To reference to the user as creator 
+    const token = req.cookies["aid"];                                   // To reference to the user as creator 
     const decodedObject = jwt.verify(token, config.privateKey);
-    const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel, creatorId: decodedObject.userID });    // data must be in {}, as it is treated as object
-    cube.save((err) => {            // model.save() method comes ready to se from mongoose 
-        if (err) {
-            console.error(err)
-            res.redirect("/create");
-        } else {
-            res.redirect("/");
-        }
+    const cube = new Cube({                                             // data must be in {}, as it is treated as object
+        name: name.trim(),
+        description: description.trim(),
+        imageUrl,
+        difficulty: difficultyLevel,
+        creatorId: decodedObject.userID
     });
+
+    try {
+        await cube.save();
+        return res.redirect("/");
+    } catch (err) {
+        res.render("create", {
+            title: "Create | Cube worshop",
+            isLoggedIn: req.isLoggedIn,
+            error: "Cube details are not valid",
+        })
+    }
 });
 
 module.exports = router;

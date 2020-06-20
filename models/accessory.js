@@ -3,12 +3,16 @@ const mongoose = require("mongoose");
 const AccessorySchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        required: true, 
+        minlength: 5,
+        match: [/^[A-Za-z0-9 ]+$/, "Accessory name is not valid!"],
     },
     description: {
         type: String,
         required: true,
         maxlength: 2000,
+        minlength: 20,
+        match: [/^[A-Za-z0-9 ]+$/, "Accessory description is not valid!"],
     },
     imageUrl: {
         type: String,
