@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const { getAllCubes } = require("../controllers/cubes");
-const {getUserStatus} = require("../controllers/user")
+const {getUserStatus} = require("../controllers/user");
+// const fetch = require("node-fetch");
 
 // here we require the controllers and are going to call all the routes
 // recomended - to have ROUTES folder to prevent a very big file here 
@@ -11,6 +12,10 @@ router.get("/",getUserStatus, async (req, res) => {
     // console.log(search, from, to);
     let cubes = await getAllCubes();
     
+    // fetch("http://localhost:4000/api/cube/all")
+    // .then(res => res.json())
+    // .then(body => console.log(body));
+
     // search
     const { search, from, to } = req.query;
     cubes = cubes.filter((c => c.name.toLocaleLowerCase().includes((search || c.name).toLocaleLowerCase())));
