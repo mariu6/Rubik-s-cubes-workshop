@@ -3,19 +3,25 @@ const env = process.env.NODE_ENV || 'development';
 const express = require("express");
 const router = new express.Router();
 const Cube = require("../models/cube");
-const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require("../controllers/cubes");
+const { getAllCubes, getCube, updateCube, getCubeWithAccessories, editCube, deleteCube } = require("../controllers/cubes");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config")[env];
 const { authAccess, getUserStatus, authAccessJSON } = require("../controllers/user");
 
-router.get("/edit/", authAccess, getUserStatus, (req, res) => {
+router.get("/edit/:id", authAccess, getUserStatus, async (req, res) => {
+    const cube = await getCubeWithAccessories(req.params.id);
     res.render("editCubePage", {
+        title: "Edit Cube | Cube worshop",
+        ...cube,
         isLoggedIn: req.isLoggedIn,
     });
 });
 
-router.get("/delete", authAccess, getUserStatus, (req, res) => {
+router.get("/delete/:id", authAccess, getUserStatus, async (req, res) => {
+    const cube = await getCubeWithAccessories(req.params.id);
     res.render("deleteCubePage", {
+        title: "Delete Cube | Cube worshop",
+        ...cube,
         isLoggedIn: req.isLoggedIn,
     });
 });
@@ -66,5 +72,25 @@ router.post("/create", authAccess, async (req, res) => {
         })
     }
 });
+
+router.post("/edit/:id", authAccess, async (req, res) => {
+    const {
+        name,
+        description,
+        imageUrl,
+        difficultyLevel
+    } = req.body;
+
+    await editCube(req.params.id, name, description, imageUrl, difficultyLevel);
+
+    res.redirect(`/details/${req.params.id}`)
+})
+
+router.post("/delete/:id", authAccess, async (req, res) => {
+
+    await deleteCube(req.params.id);
+
+    res.redirect(`/`);
+})
 
 module.exports = router;

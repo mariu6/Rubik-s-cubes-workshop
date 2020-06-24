@@ -20,9 +20,21 @@ async function updateCube(cubeId, accessoryId) {
     })
 }
 
+async function editCube(cubeId, name, description, imageUrl, difficultyLevel) {
+    await Cube.findByIdAndUpdate(cubeId, {
+        name, description, imageUrl, difficulty: difficultyLevel
+    })
+}
+
+async function deleteCube(cubeId) {
+    await Cube.findByIdAndDelete(cubeId);
+}
+
 module.exports = {
     getAllCubes,
     getCube,
     updateCube,
     getCubeWithAccessories,
+    editCube,
+    deleteCube,
 }

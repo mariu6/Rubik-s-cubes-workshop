@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const config = require("../config/config")[env];
 
 const generateToken = (data) => {
-    const token = jwt.sign(data, config.privateKey);
+    const token = jwt.sign(data, config.privateKey, {expiresIn:"1h"});
     return token;
 }
 
@@ -32,7 +32,7 @@ const saveUser = async (req, res) => {
             username: userObject.username,    // pass shoudn't be shown here
         });
 
-        res.cookie("aid", token);
+        res.cookie("aid", token, {expires: new Date(Date.now() + 900000), httpOnly: true});
         return token;
     } catch (err) {
         return {
@@ -77,7 +77,7 @@ const verifyUser = async (req, res) => {
                 username: user.username,    // pass shoudn't be shown here
             });
 
-            res.cookie("aid", token);
+            res.cookie("aid", token, {maxAge: 900000, httpOnly: true});
         }
 
         return {
